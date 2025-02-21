@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+TAG=codepainters/printrun:2.2.20250221
+
+DEV=$1
+if [ -z "$DEV" ]; then
+    echo "Correct invocation: $0 <printer_device>"
+    exit 1
+fi
+
+  
+exec docker run --rm --name pronterface \
+    --network=host \
+    --ipc=host \
+    --device=$DEV \
+    -e DISPLAY=$DISPLAY \
+    -e HOME=$HOME \
+    --user $(id -u):$(id -g) \
+    -v /dev/dri:/dev/dri \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v "$HOME:$HOME" \
+    -w $HOME \
+    $TAG
